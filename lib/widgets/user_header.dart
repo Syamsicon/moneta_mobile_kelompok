@@ -22,22 +22,6 @@ class UserHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          // Avatar circle with initial
-          Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.border, width: 1),
-            ),
-            child: Text(
-              initial,
-              style: AppTextStyles.avatarInitial,
-            ),
-          ),
-          const SizedBox(width: 12),
-
           // User Name & Date
           Expanded(
             child: Column(
