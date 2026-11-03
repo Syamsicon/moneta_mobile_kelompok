@@ -6,12 +6,12 @@ import 'package:get/get.dart';
 import 'package:moneta/controllers/rekomendasi_controller.dart';
 import 'package:moneta/models/kelompok_alokasi.dart';
 import 'package:moneta/models/rekomendasi_model.dart';
+import 'package:moneta/routes/app_routes.dart';
 import 'package:moneta/theme/app_colors.dart';
 
 // ============================================================================
 // PAGE
 // ============================================================================
-
 
 class RekomendasiView extends GetView<RekomendasiController> {
   const RekomendasiView({super.key});
@@ -26,7 +26,9 @@ class RekomendasiView extends GetView<RekomendasiController> {
         titleSpacing: 0,
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, color: Colors.black, size: 28),
-          onPressed: Get.back,
+          onPressed: () {
+            Get.offAllNamed(AppRoutes.alokasi);
+          },
         ),
         title: const Text(
           'Rekomendasi',
@@ -38,14 +40,12 @@ class RekomendasiView extends GetView<RekomendasiController> {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          color: AppColors.background
-        ),
+        decoration: BoxDecoration(color: AppColors.background),
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
-        
+
           if (controller.errorMessage.value != null) {
             return Center(
               child: Column(
@@ -60,9 +60,9 @@ class RekomendasiView extends GetView<RekomendasiController> {
               ),
             );
           }
-        
+
           final dipakai = controller.sedangDipakai.value;
-        
+
           Widget section(String judul, List<RekomendasiModel> items) {
             if (items.isEmpty) return const SizedBox.shrink();
             return Column(
@@ -76,20 +76,30 @@ class RekomendasiView extends GetView<RekomendasiController> {
                     enabled: dipakai == null,
                     onPakai: () => controller.pakai(item),
                   ),
-                  const Divider(height: 1, thickness: 1, color: Color(0xFFE6E6E6)),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color(0xFFE6E6E6),
+                  ),
                 ],
               ],
             );
           }
-        
+
           return RefreshIndicator(
             onRefresh: controller.load,
             child: ListView(
               // Keeps pull-to-refresh working even when the content is short.
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                section('Berdasarkan Pendapatan', controller.berdasarkanPendapatan),
-                section('Berdasarkan Pengeluaran', controller.berdasarkanPengeluaran),
+                section(
+                  'Berdasarkan Pendapatan',
+                  controller.berdasarkanPendapatan,
+                ),
+                section(
+                  'Berdasarkan Pengeluaran',
+                  controller.berdasarkanPengeluaran,
+                ),
               ],
             ),
           );
@@ -304,7 +314,7 @@ class _PiePainter extends CustomPainter {
 /// Slice and legend colors, matching the grayscale design.
 /// TODO: move these into AppColors if you want them in the theme.
 Color _warnaKelompok(KelompokAlokasi kelompok) => switch (kelompok) {
-      KelompokAlokasi.kebutuhan => const Color(0xFF000000),
-      KelompokAlokasi.keinginan => const Color(0xFF8A8A8A),
-      KelompokAlokasi.tabungan => const Color(0xFFD3D3D3),
-    };
+  KelompokAlokasi.kebutuhan => const Color(0xFF000000),
+  KelompokAlokasi.keinginan => const Color(0xFF8A8A8A),
+  KelompokAlokasi.tabungan => const Color(0xFFD3D3D3),
+};

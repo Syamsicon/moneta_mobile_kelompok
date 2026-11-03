@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moneta/controllers/alokasi_controller.dart';
+import 'package:moneta/routes/app_routes.dart';
 import 'package:moneta/theme/app_colors.dart';
 import 'package:moneta/widgets/top_nav_bar.dart';
 
@@ -211,7 +212,7 @@ class AlokasiView extends GetView<AlokasiController> {
                           ),
                           IconButton(
                             onPressed: () {
-                              // Pindah halaman ke rekomendasi
+                              Get.toNamed(AppRoutes.rekomendasi);
                             },
                             icon: const Icon(Icons.lightbulb_outline),
                             tooltip: "Rekomendasi",
