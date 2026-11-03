@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moneta/models/alokasi_model.dart';
 import 'package:moneta/models/kategori_catalog.dart';
 import 'package:moneta/models/rekomendasi_model.dart';
-import 'package:moneta/routes/app_routes.dart';
 import 'package:moneta/services/alokasi_service.dart';
+import 'package:moneta/theme/app_colors.dart';
 
 class RekomendasiController extends GetxController {
   static const _pendapatan = 5000000;
@@ -52,6 +53,49 @@ class RekomendasiController extends GetxController {
     }
   }
 
+  Future<void> konfirmasiPakai(RekomendasiModel rekomendasi) async {
+  if (sedangDipakai.value != null) return; // ignore double taps
+
+    final income = _alokasi.monthlyIncome.value;
+    final catatan = income > 0
+        ? 'Nominal akan disesuaikan dengan pendapatanmu saat ini.'
+        : 'Pendapatan akan diisi otomatis sesuai rekomendasi.';
+
+    final ok = await Get.dialog<bool>(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: .circular(8.0)
+        ),
+        backgroundColor: AppColors.background,
+        title: const Text('OverWrite', style: TextStyle(fontWeight: .w500),),
+        content: Text(
+          'Apakah anda yakin ingin mengganti keseluruhan alokasi anda?'
+        ),
+        actions: [
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error
+            ),
+            onPressed: () => Get.back(result: false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.grey
+            ),
+            onPressed: () => Get.back(result: true),
+            child: const Text('Ya, pakai'),
+          ),
+        ],
+      ));
+
+    if (ok != true) return;
+    
+     pakai(rekomendasi);
+  }
+
+}
+
   RekomendasiModel _dariPersen(
     String nama,
     int total,
@@ -82,4 +126,3 @@ class RekomendasiController extends GetxController {
       ],
     );
   }
-}

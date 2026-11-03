@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:moneta/controllers/rekomendasi_controller.dart';
 import 'package:moneta/models/alokasi_model.dart';
 import 'package:moneta/models/rekomendasi_model.dart';
-import 'package:moneta/routes/app_routes.dart';
 import 'package:moneta/theme/app_colors.dart';
 
 
@@ -69,7 +68,7 @@ class RekomendasiView extends GetView<RekomendasiController> {
                     rekomendasi: item,
                     isLoading: identical(dipakai, item),
                     enabled: dipakai == null,
-                    onPakai: () => controller.pakai(item),
+                    onPakai: () => controller.konfirmasiPakai(item),
                   ),
                   const Divider(
                     height: 1,
@@ -138,7 +137,7 @@ class _RekomendasiCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final entries = rekomendasi.daftarAlokasi.where((e) => e.amount > 0).toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
-    final warna = [for (var i = 0; i < entries.length; i++) _shade(i, entries.length)];
+    final warna = [for(final kategori in entries) kategori.color];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
