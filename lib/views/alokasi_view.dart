@@ -24,92 +24,185 @@ class AlokasiView extends GetView<AlokasiController> {
             ),
             SizedBox(height: 8),
 
+            // main content
             Expanded(
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: AppColors.sheetWhite,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    topRight: Radius.circular(12),
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
                   ),
                 ),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 100),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 8),
-                      // Konten utama
                       SizedBox(
-                        height: 220,
+                        height: 200,
                         child: Obx(() {
-                          if (controller.selectedKategori.isEmpty) {
+                          final selected = controller.selectedKategori;
+                          final income = controller.monthlyIncome.value;
+
+                          if (income <= 0) {
                             return Center(
-                              child: Text('Belum ada kategori yang dipilih'),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.pie_chart_outline,
+                                    size: 48,
+                                    color: Colors.grey,
+                                  ),
+                                  SizedBox(height: 8),
+                                  Text(
+                                    'Masukkan pendapatan terlebih dahulu',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           }
+
+                          double totalAllocated = selected.fold(
+                            0,
+                            (sum, item) => sum + item.amount,
+                          );
+                          double remaining = income - totalAllocated;
+
+                          List<PieChartSectionData> sections = [];
+
+                          for (int i = 0; i < selected.length; i++) {
+                            final item = selected[i];
+                            double percentage = (item.amount / income) * 100;
+
+                            sections.add(
+                              PieChartSectionData(
+                                color: item.color,
+                                value: item.amount > 0 ? item.amount : 0.01,
+                                title: item.amount > 0
+                                    ? '${percentage.toStringAsFixed(0)}%'
+                                    : '',
+                                radius: 45,
+                                titleStyle: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          }
+
+                          if (remaining > 0) {
+                            double remainingPercentage =
+                                (remaining / income) * 100;
+                            sections.add(
+                              PieChartSectionData(
+                                color: Colors.grey.shade300,
+                                value: remaining,
+                                title:
+                                    '${remainingPercentage.toStringAsFixed(0)}%',
+                                radius: 40,
+                                titleStyle: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
+                            );
+                          }
+
                           return PieChart(
                             PieChartData(
                               sectionsSpace: 2,
-                              centerSpaceRadius: 40,
-                              sections: controller.selectedKategori
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                    final index = entry.key;
-                                    final item = entry.value;
-                                    final colors = [
-                                      Colors.blue,
-                                      Colors.green,
-                                      Colors.orange,
-                                      Colors.purple,
-                                      Colors.red,
-                                      Colors.teal,
-                                    ];
-                                    final color = colors[index % colors.length];
-
-                                    double percentage =
-                                        controller.monthlyIncome.value > 0
-                                        ? (item.amount /
-                                                  controller
-                                                      .monthlyIncome
-                                                      .value) *
-                                              100
-                                        : 0;
-
-                                    return PieChartSectionData(
-                                      color: color,
-                                      value: item.amount > 0 ? item.amount : 1,
-                                      title:
-                                          '${percentage.toStringAsFixed(1)}%',
-                                      radius: 50,
-                                      titleStyle: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  })
-                                  .toList(),
+                              centerSpaceRadius: 45,
+                              sections: sections,
                             ),
                           );
                         }),
                       ),
-                      SizedBox(height: 20),
+
+                      const SizedBox(height: 12),
+
+                      Obx(() {
+                        final selected = controller.selectedKategori;
+                        if (selected.isEmpty) return const SizedBox.shrink();
+
+                        return Wrap(
+                          spacing: 12,
+                          runSpacing: 6,
+                          alignment: WrapAlignment.start,
+                          children: [
+                            ...List.generate(selected.length, (index) {
+                              final item = selected[index];
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                      color: item.color,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade300,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Sisa Belum Dialokasikan',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blueGrey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      }),
+
+                      const SizedBox(height: 20),
+
                       Row(
                         spacing: 8.0,
                         children: [
                           IconButton.filled(
                             onPressed: () => _showCategoryOverlay(context),
                             tooltip: "Tambah kategori",
-                            icon: Icon(Icons.add),
+                            icon: const Icon(Icons.add),
                           ),
                           Expanded(
                             child: TextField(
                               controller: controller.incomeController,
-                              keyboardType: .number,
-                              decoration: InputDecoration(
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
                                 labelText: "Pendapatan (Rp)",
                                 border: OutlineInputBorder(),
                                 isDense: true,
@@ -117,63 +210,86 @@ class AlokasiView extends GetView<AlokasiController> {
                             ),
                           ),
                           IconButton(
-                            onPressed: () => {
-                              // pindah halaman ke rekomendasi
+                            onPressed: () {
+                              // Pindah halaman ke rekomendasi
                             },
-                            icon: Icon(Icons.lightbulb_outline),
+                            icon: const Icon(Icons.lightbulb_outline),
                             tooltip: "Rekomendasi",
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
-                      Text(
+
+                      const SizedBox(height: 20),
+
+                      const Text(
                         "Alokasi per kategori",
-                        style: TextStyle(fontSize: 18, fontWeight: .bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      const SizedBox(height: 8),
+
                       Obx(() {
                         final selected = controller.selectedKategori;
                         if (selected.isEmpty) {
                           return Padding(
-                            padding: EdgeInsets.symmetric(vertical: 20),
+                            padding: const EdgeInsets.symmetric(vertical: 20),
                             child: Center(
                               child: Text(
                                 'Belum ada kategori aktif. Klik tombol "Kategori" di atas.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.grey.shade600),
                               ),
                             ),
                           );
                         }
                         return ListView.builder(
                           shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: selected.length,
                           itemBuilder: (context, index) {
                             final item = selected[index];
+
                             return Card(
-                              margin: EdgeInsets.symmetric(vertical: 4),
-                              elevation: 2.0,
+                              margin: const EdgeInsets.symmetric(vertical: 4),
+                              elevation: 1.0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               child: Padding(
-                                padding: EdgeInsetsGeometry.all(8.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Row(
                                   spacing: 8.0,
-                                  crossAxisAlignment: .start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Icon(item.icon, color: Colors.blue),
+                                    Icon(item.icon, color: item.color),
                                     Expanded(
-                                      flex: 2,
                                       child: Column(
-                                        crossAxisAlignment: .start,
-                                        spacing: 8.0,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        spacing: 4.0,
                                         children: [
-                                          Text(item.name),
+                                          Text(
+                                            item.name,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                           TextFormField(
                                             initialValue: item.amount
                                                 .toInt()
                                                 .toString(),
                                             keyboardType: TextInputType.number,
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               isDense: true,
                                               border: OutlineInputBorder(),
                                               prefixText: 'Rp ',
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 8,
+                                                  ),
                                             ),
                                             onChanged: (val) {
                                               double amount =
@@ -233,7 +349,7 @@ class AlokasiView extends GetView<AlokasiController> {
                 itemBuilder: (context, index) {
                   final kat = controller.kategoriList[index];
                   return CheckboxListTile(
-                    secondary: Icon(kat.icon),
+                    secondary: Icon(kat.icon, color: kat.color),
                     title: Text(kat.name),
                     value: kat.isSelected,
                     onChanged: (bool? value) {
