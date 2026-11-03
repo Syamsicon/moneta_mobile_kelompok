@@ -1,30 +1,28 @@
-
-
-import 'package:moneta/models/kategori_model.dart';
+import 'package:moneta/models/alokasi_model.dart';
 
 class RekomendasiModel {
-  String nama;
-  List<KategoriModel> daftarAlokasi;
+  final String nama;
 
-  RekomendasiModel({required this.nama, required this.daftarAlokasi});
-}
+  //Keseluruhan akan dibandingkan dengan pendapatan atau pengeluaran
+  final double basis;
+  final List<AlokasiModel> daftarAlokasi;
 
-extension RekomendasiModelX on RekomendasiModel {
-  int get total => daftarAlokasi.fold(0, (sum, item) => sum + item.nominal);
+  RekomendasiModel({
+    required this.nama,
+    required this.basis,
+    required this.daftarAlokasi,
+  });
 
-  Map<KategoriPengeluaran, int> get nominalPerKategori {
-    final hasil = {for (final k in KategoriPengeluaran.values) k: 0};
-    for (final item in daftarAlokasi) {
-      hasil[item.kategori] = hasil[item.kategori]! + item.nominal;
-    }
-    return hasil;
-  }
+  double get total => daftarAlokasi.fold(0.0, (s, a) => s + a.amount);
 
-  Map<KategoriPengeluaran, double> get persenPerKategori {
-    final t = total;
-    return nominalPerKategori.map(
-      (kategori, nominal) =>
-          MapEntry(kategori, t == 0 ? 0.0 : nominal / t * 100),
-    );
+  double persenDari(AlokasiModel a) => total == 0 ? 0 : a.amount / total * 100;
+
+  //Rekomendasi berdasarkan pendapatan
+  List<AlokasiModel> skalakan(double income) {
+    final f = basis == 0 ? 0.0 : income / basis;
+    return [
+      for (final a in daftarAlokasi)
+        a.copyWith(amount: (a.amount * f).roundToDouble()),
+    ];
   }
 }

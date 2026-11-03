@@ -278,6 +278,9 @@ class AlokasiView extends GetView<AlokasiController> {
                                             ),
                                           ),
                                           TextFormField(
+                                            key: ValueKey(
+                                              '${item.id}_${controller.applyVersion.value}',
+                                            ),
                                             initialValue: item.amount
                                                 .toInt()
                                                 .toString(),

@@ -1,11 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moneta/controllers/rekomendasi_controller.dart';
-import 'package:moneta/models/kategori_model.dart';
+import 'package:moneta/models/alokasi_model.dart';
 import 'package:moneta/models/rekomendasi_model.dart';
 import 'package:moneta/routes/app_routes.dart';
 import 'package:moneta/theme/app_colors.dart';
@@ -25,7 +22,7 @@ class RekomendasiView extends GetView<RekomendasiController> {
         leading: IconButton(
           icon: const Icon(Icons.chevron_left, color: Colors.black, size: 28),
           onPressed: () {
-            Get.offAllNamed(AppRoutes.alokasi);
+            Get.back();
           },
         ),
         title: const Text(
@@ -139,11 +136,9 @@ class _RekomendasiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Only categories that actually have an allocation, largest first.
-    final entries = rekomendasi.persenPerKategori.entries
-        .where((e) => e.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final entries = rekomendasi.daftarAlokasi.where((e) => e.amount > 0).toList()
+      ..sort((a, b) => b.amount.compareTo(a.amount));
+    final warna = [for (var i = 0; i < entries.length; i++) _shade(i, entries.length)];
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
@@ -151,13 +146,17 @@ class _RekomendasiCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              _AlokasiPieChart(data: entries, size: 96),
+              _AlokasiPieChart(data: entries, colors: warna, size: 96),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   children: [
-                    for (final e in entries)
-                      _LegendRow(kategori: e.key, persen: e.value),
+                    for (var i = 0; i < entries.length; i++)
+                      _LegendRow(
+                        nama: entries[i].name,
+                        warna: warna[i],
+                        persen: rekomendasi.persenDari(entries[i]),
+                      ),
                   ],
                 ),
               ),
@@ -178,9 +177,10 @@ class _RekomendasiCard extends StatelessWidget {
 }
 
 class _LegendRow extends StatelessWidget {
-  const _LegendRow({required this.kategori, required this.persen});
+  const _LegendRow({required this.nama, required this.warna, required this.persen});
 
-  final KategoriPengeluaran kategori;
+  final String nama;
+  final Color warna;
   final double persen;
 
   @override
@@ -193,15 +193,13 @@ class _LegendRow extends StatelessWidget {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: _warnaKategori(kategori),
+              color: warna,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black12, width: 0.5),
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(
-            child: Text(kategori.label, style: const TextStyle(fontSize: 11)),
-          ),
+          Expanded(child: Text(nama, style: const TextStyle(fontSize: 11))),
           Text(
             '${persen.round()}%',
             style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
@@ -212,6 +210,47 @@ class _LegendRow extends StatelessWidget {
   }
 }
 
+class _AlokasiPieChart extends StatelessWidget {
+  const _AlokasiPieChart({required this.data, required this.colors, this.size = 96});
+
+  final List<AlokasiModel> data;
+  final List<Color> colors;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    if (data.isEmpty) return SizedBox(width: size, height: size);
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: PieChart(
+        PieChartData(
+          startDegreeOffset: 90,
+          sectionsSpace: 2,
+          borderData: FlBorderData(show: true),
+          pieTouchData: PieTouchData(enabled: false),
+          sections: [
+            for (var i = 0; i < data.length; i++)
+              PieChartSectionData(
+                value: data[i].amount,
+                color: colors[i],
+                radius: size / 2,
+                showTitle: false,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+Color _shade(int i, int n) => Color.lerp(
+      const Color(0xFF000000),
+      const Color(0xFFEBEBEB),
+      n <= 1 ? 0 : i / (n - 1),
+    )!;
 
 class _PakaiButton extends StatelessWidget {
   const _PakaiButton({required this.onPressed, required this.isLoading});
@@ -249,51 +288,3 @@ class _PakaiButton extends StatelessWidget {
     );
   }
 }
-
-class _AlokasiPieChart extends StatelessWidget {
-  const _AlokasiPieChart({required this.data, this.size = 96});
-
-  final List<MapEntry<KategoriPengeluaran, double>> data;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    if (data.isEmpty) return SizedBox(width: size, height: size);
-
-    return SizedBox(
-      width: size,
-      height: size,
-      child: PieChart(
-        PieChartData(
-          startDegreeOffset: 90,
-          sectionsSpace: 2,
-          borderData: FlBorderData(show: true),
-          pieTouchData: PieTouchData(enabled: false),
-          sections: [
-            for (final e in data)
-              PieChartSectionData(
-                value: e.value,
-                color: _warnaKategori(e.key),
-                radius: size / 2,
-                showTitle: false,
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Color _warnaKategori(KategoriPengeluaran kategori) => switch (kategori) {
-      KategoriPengeluaran.makanMinum => const Color(0xFF000000),
-      KategoriPengeluaran.tempatTinggal => const Color(0xFF3A3A3A),
-      KategoriPengeluaran.transportasi => const Color(0xFF5E5E5E),
-      KategoriPengeluaran.tagihan => const Color(0xFF8A8A8A),
-      KategoriPengeluaran.kesehatan => const Color(0xFF9C9C9C),
-      KategoriPengeluaran.pendidikan => const Color(0xFFAFAFAF),
-      KategoriPengeluaran.kebersihan => const Color(0xFFBDBDBD),
-      KategoriPengeluaran.hiburan => const Color(0xFFC8C8C8),
-      KategoriPengeluaran.donasi => const Color(0xFFD3D3D3),
-      KategoriPengeluaran.tabungan => const Color(0xFFE0E0E0),
-      KategoriPengeluaran.lainnya => const Color(0xFFEBEBEB),
-    };

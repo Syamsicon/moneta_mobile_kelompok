@@ -1,36 +1,15 @@
-enum KategoriPengeluaran {
-  makanMinum,
-  transportasi,
-  tagihan,
-  donasi,
-  kesehatan,
-  pendidikan,
-  kebersihan,
-  tempatTinggal,
-  hiburan,
-  tabungan,
-  lainnya,
-}
-
-extension KategoriPengeluaranX on KategoriPengeluaran {
-  String get label => switch (this) {
-        KategoriPengeluaran.makanMinum => 'Makan & Minum',
-        KategoriPengeluaran.transportasi => 'Transportasi',
-        KategoriPengeluaran.tagihan => 'Tagihan',
-        KategoriPengeluaran.donasi => 'Donasi',
-        KategoriPengeluaran.kesehatan => 'Kesehatan',
-        KategoriPengeluaran.pendidikan => 'Pendidikan',
-        KategoriPengeluaran.kebersihan => 'Kebersihan',
-        KategoriPengeluaran.tempatTinggal => 'Tempat Tinggal',
-        KategoriPengeluaran.hiburan => 'Hiburan',
-        KategoriPengeluaran.tabungan => 'Tabungan',
-        KategoriPengeluaran.lainnya => 'Lainnya',
-      };
-}
+import 'package:flutter/material.dart';
 
 class KategoriModel {
-  KategoriPengeluaran kategori;
-  int nominal;
+  final String id;
+  final String name;
+  final IconData icon;
+  final Color color;
 
-  KategoriModel({required this.kategori, required this.nominal});
+  const KategoriModel({
+    required this.id,
+    required this.name,
+    required this.icon,
+    required this.color,
+  });
 }
