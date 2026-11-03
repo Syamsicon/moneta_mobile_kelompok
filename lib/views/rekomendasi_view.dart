@@ -1,17 +1,15 @@
 import 'dart:math' as math;
 
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moneta/controllers/rekomendasi_controller.dart';
-import 'package:moneta/models/kelompok_alokasi.dart';
+import 'package:moneta/models/kategori_model.dart';
 import 'package:moneta/models/rekomendasi_model.dart';
 import 'package:moneta/routes/app_routes.dart';
 import 'package:moneta/theme/app_colors.dart';
 
-// ============================================================================
-// PAGE
-// ============================================================================
 
 class RekomendasiView extends GetView<RekomendasiController> {
   const RekomendasiView({super.key});
@@ -89,7 +87,6 @@ class RekomendasiView extends GetView<RekomendasiController> {
           return RefreshIndicator(
             onRefresh: controller.load,
             child: ListView(
-              // Keeps pull-to-refresh working even when the content is short.
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 section(
@@ -109,11 +106,6 @@ class RekomendasiView extends GetView<RekomendasiController> {
   }
 }
 
-// ============================================================================
-// COMPONENTS (private to this page)
-// ============================================================================
-
-/// Gray bar that titles each section.
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader(this.judul);
 
@@ -132,7 +124,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// One recommendation: pie chart, legend with percentages, and the Pakai button.
 class _RekomendasiCard extends StatelessWidget {
   const _RekomendasiCard({
     required this.rekomendasi,
@@ -143,37 +134,34 @@ class _RekomendasiCard extends StatelessWidget {
 
   final RekomendasiModel rekomendasi;
   final VoidCallback onPakai;
-
   final bool isLoading;
-
   final bool enabled;
 
   @override
   Widget build(BuildContext context) {
-    final persen = rekomendasi.persenPerKelompok;
+    // Only categories that actually have an allocation, largest first.
+    final entries = rekomendasi.persenPerKategori.entries
+        .where((e) => e.value > 0)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
       child: Column(
         children: [
-          Container(
-            child: Row(
-              children: [
-                _AlokasiPieChart(data: persen, size: 96),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    children: [
-                      for (final kelompok in KelompokAlokasi.values)
-                        _LegendRow(
-                          kelompok: kelompok,
-                          persen: persen[kelompok] ?? 0,
-                        ),
-                    ],
-                  ),
+          Row(
+            children: [
+              _AlokasiPieChart(data: entries, size: 96),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  children: [
+                    for (final e in entries)
+                      _LegendRow(kategori: e.key, persen: e.value),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Align(
@@ -189,11 +177,10 @@ class _RekomendasiCard extends StatelessWidget {
   }
 }
 
-/// Dot + label + percentage row in the legend.
 class _LegendRow extends StatelessWidget {
-  const _LegendRow({required this.kelompok, required this.persen});
+  const _LegendRow({required this.kategori, required this.persen});
 
-  final KelompokAlokasi kelompok;
+  final KategoriPengeluaran kategori;
   final double persen;
 
   @override
@@ -206,14 +193,14 @@ class _LegendRow extends StatelessWidget {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: _warnaKelompok(kelompok),
+              color: _warnaKategori(kategori),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.black12, width: 0.5),
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(kelompok.label, style: const TextStyle(fontSize: 11)),
+            child: Text(kategori.label, style: const TextStyle(fontSize: 11)),
           ),
           Text(
             '${persen.round()}%',
@@ -225,7 +212,7 @@ class _LegendRow extends StatelessWidget {
   }
 }
 
-/// Small black pill button.
+
 class _PakaiButton extends StatelessWidget {
   const _PakaiButton({required this.onPressed, required this.isLoading});
 
@@ -263,58 +250,50 @@ class _PakaiButton extends StatelessWidget {
   }
 }
 
-/// Grayscale pie chart, drawn without any extra package.
 class _AlokasiPieChart extends StatelessWidget {
   const _AlokasiPieChart({required this.data, this.size = 96});
 
-  /// Percentage (or any positive weight) per group.
-  final Map<KelompokAlokasi, double> data;
+  final List<MapEntry<KategoriPengeluaran, double>> data;
   final double size;
 
   @override
   Widget build(BuildContext context) {
+    if (data.isEmpty) return SizedBox(width: size, height: size);
+
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(painter: _PiePainter(data)),
+      child: PieChart(
+        PieChartData(
+          startDegreeOffset: 90,
+          sectionsSpace: 2,
+          borderData: FlBorderData(show: true),
+          pieTouchData: PieTouchData(enabled: false),
+          sections: [
+            for (final e in data)
+              PieChartSectionData(
+                value: e.value,
+                color: _warnaKategori(e.key),
+                radius: size / 2,
+                showTitle: false,
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-class _PiePainter extends CustomPainter {
-  _PiePainter(this.data);
-
-  final Map<KelompokAlokasi, double> data;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final total = data.values.fold<double>(0, (a, b) => a + b);
-    if (total <= 0) return;
-
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
-
-    var start = -math.pi / 2; // start at 12 o'clock
-    for (final entry in data.entries) {
-      if (entry.value <= 0) continue;
-      final sweep = entry.value / total * 2 * math.pi;
-      paint.color = _warnaKelompok(entry.key);
-      canvas.drawArc(rect, start, sweep, true, paint);
-      start += sweep;
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _PiePainter oldDelegate) =>
-      !mapEquals(oldDelegate.data, data);
-}
-
-/// Slice and legend colors, matching the grayscale design.
-/// TODO: move these into AppColors if you want them in the theme.
-Color _warnaKelompok(KelompokAlokasi kelompok) => switch (kelompok) {
-  KelompokAlokasi.kebutuhan => const Color(0xFF000000),
-  KelompokAlokasi.keinginan => const Color(0xFF8A8A8A),
-  KelompokAlokasi.tabungan => const Color(0xFFD3D3D3),
-};
+Color _warnaKategori(KategoriPengeluaran kategori) => switch (kategori) {
+      KategoriPengeluaran.makanMinum => const Color(0xFF000000),
+      KategoriPengeluaran.tempatTinggal => const Color(0xFF3A3A3A),
+      KategoriPengeluaran.transportasi => const Color(0xFF5E5E5E),
+      KategoriPengeluaran.tagihan => const Color(0xFF8A8A8A),
+      KategoriPengeluaran.kesehatan => const Color(0xFF9C9C9C),
+      KategoriPengeluaran.pendidikan => const Color(0xFFAFAFAF),
+      KategoriPengeluaran.kebersihan => const Color(0xFFBDBDBD),
+      KategoriPengeluaran.hiburan => const Color(0xFFC8C8C8),
+      KategoriPengeluaran.donasi => const Color(0xFFD3D3D3),
+      KategoriPengeluaran.tabungan => const Color(0xFFE0E0E0),
+      KategoriPengeluaran.lainnya => const Color(0xFFEBEBEB),
+    };

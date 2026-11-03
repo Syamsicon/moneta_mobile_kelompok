@@ -26,11 +26,8 @@ class TopNavBar extends StatelessWidget {
   static const _items = [
     _NavItem(label: "Riwayat", icon: Icons.history, routeName: ''),
     _NavItem(label: "Dashboard", icon: Icons.dashboard, routeName: AppRoutes.dashboard),
-    _NavItem(label: "Alokasi", icon: Icons.history, routeName: AppRoutes.alokasi)
+    _NavItem(label: "Alokasi", icon: Icons.assignment_outlined, routeName: AppRoutes.alokasi)
   ];
-
-  static const _label = ['Riwayat', 'Dashboard', 'Alokasi'];
-  static const _icon = [Icons.history, Icons.dashboard, Icons.assignment_outlined];
 
   @override
   Widget build(BuildContext context) {

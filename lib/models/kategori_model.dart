@@ -1,21 +1,32 @@
-
-enum KategoriPengeluaran{
+enum KategoriPengeluaran {
   makanMinum,
   transportasi,
-  utilitas,
-  langganan,
+  tagihan,
   donasi,
   kesehatan,
   pendidikan,
   kebersihan,
   tempatTinggal,
-  cicilan,
   hiburan,
   tabungan,
-  investasi,
-  lainnya
+  lainnya,
 }
 
+extension KategoriPengeluaranX on KategoriPengeluaran {
+  String get label => switch (this) {
+        KategoriPengeluaran.makanMinum => 'Makan & Minum',
+        KategoriPengeluaran.transportasi => 'Transportasi',
+        KategoriPengeluaran.tagihan => 'Tagihan',
+        KategoriPengeluaran.donasi => 'Donasi',
+        KategoriPengeluaran.kesehatan => 'Kesehatan',
+        KategoriPengeluaran.pendidikan => 'Pendidikan',
+        KategoriPengeluaran.kebersihan => 'Kebersihan',
+        KategoriPengeluaran.tempatTinggal => 'Tempat Tinggal',
+        KategoriPengeluaran.hiburan => 'Hiburan',
+        KategoriPengeluaran.tabungan => 'Tabungan',
+        KategoriPengeluaran.lainnya => 'Lainnya',
+      };
+}
 
 class KategoriModel {
   KategoriPengeluaran kategori;
