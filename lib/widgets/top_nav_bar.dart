@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
+import 'package:moneta/routes/app_routes.dart';
 import '../theme/app_text_styles.dart';
+
+
+class _NavItem {
+  final String label;
+  final IconData icon;
+  final String routeName;
+
+  const _NavItem({required this.label, required this.icon, required this.routeName});
+
+}
 
 class TopNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -11,16 +23,22 @@ class TopNavBar extends StatelessWidget {
     this.onNavTap,
   });
 
+  static const _items = [
+    _NavItem(label: "Riwayat", icon: Icons.history, routeName: ''),
+    _NavItem(label: "Dashboard", icon: Icons.dashboard, routeName: AppRoutes.dashboard),
+    _NavItem(label: "Alokasi", icon: Icons.history, routeName: AppRoutes.alokasi)
+  ];
+
   static const _label = ['Riwayat', 'Dashboard', 'Alokasi'];
   static const _icon = [Icons.history, Icons.dashboard, Icons.assignment_outlined];
 
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
-    for (var i = 0; i < _label.length; i++) {
+    for (var i = 0; i < _items.length; i++) {
       if(i > 0) children.add(const SizedBox(width: 8));
       children.add(
-        i == selectedIndex ? _activeCapsule(i) : Expanded(child: _pill(i)),
+        i == selectedIndex ? _activeCapsule(_items[i]) : Expanded(child: _pill(_items[i])),
       );
     }
 
@@ -31,7 +49,7 @@ class TopNavBar extends StatelessWidget {
     );
   }
 
-  Widget _activeCapsule(int index) {
+  Widget _activeCapsule(_NavItem item) {
     return Container(
       width: 72,
       height: 44,
@@ -40,13 +58,13 @@ class TopNavBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(50),
         border: Border.all(color: Colors.white, width: 1),
       ),
-      child: Icon(_icon[index], size: 22, color: Colors.white),
+      child: Icon(item.icon, size: 22, color: Colors.white),
     );
   }
 
-  Widget _pill(int index) {
+  Widget _pill(_NavItem item) {
     return InkWell(
-      onTap: () => onNavTap?.call(index),
+      onTap: () => Get.offAllNamed(item.routeName),
       borderRadius: BorderRadius.circular(50),
       child: Container(
         height: 40,
@@ -55,7 +73,7 @@ class TopNavBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(50),
           border: Border.all(color: Colors.white, width: 1),
         ),
-        child: Text(_label[index], style: AppTextStyles.navPill,),
+        child: Text(item.label, style: AppTextStyles.navPill,),
       ),
     );
   }

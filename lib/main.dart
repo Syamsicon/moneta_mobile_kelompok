@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.light,
       initialRoute: AppRoutes.dashboard,
       getPages: AppPages.pages,
+      defaultTransition: .noTransition,
+      transitionDuration: .zero,
     );
   }
 }
