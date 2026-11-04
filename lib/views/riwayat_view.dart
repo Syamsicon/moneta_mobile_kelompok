@@ -4,7 +4,6 @@ import '../controllers/riwayat_controller.dart';
 import '../theme/app_colors.dart';
 import '../widgets/quick_add_button.dart';
 import '../widgets/top_nav_bar.dart';
-import '../widgets/user_header.dart';
 import '../widgets/transaction_history_section.dart';
 
 class RiwayatView extends GetView<RiwayatController> {

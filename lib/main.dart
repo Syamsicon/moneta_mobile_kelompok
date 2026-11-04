@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Moneta',
       theme: AppTheme.light,
-      initialRoute: AppRoutes.dashboard,
+      initialRoute: AppRoutes.login,
       getPages: AppPages.pages,
       defaultTransition: .noTransition,
       transitionDuration: .zero,

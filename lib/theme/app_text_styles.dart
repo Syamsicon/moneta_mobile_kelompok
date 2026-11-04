@@ -40,10 +40,10 @@ class AppTextStyles {
         color: Colors.black,
       );
 
-  static TextStyle get link => GoogleFonts.inter(
+  static TextStyle link({required bool isHovered}) => GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
-        color: AppColors.textPrimary,
+        color: isHovered ? AppColors.textPrimary : AppColors.grey,
       );
 
   // Dashboard styles
@@ -105,5 +105,16 @@ class AppTextStyles {
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: Colors.white,
+      );
+  static TextStyle get icon => GoogleFonts.inter(
+        fontSize: 9,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textPrimary,
+      );
+  static TextStyle get hint => GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: AppColors.grey,
+        fontStyle: FontStyle.italic,
       );
 }

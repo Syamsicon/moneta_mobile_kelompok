@@ -1,9 +1,13 @@
 import 'package:get/get.dart';
 import 'package:moneta/controllers/alokasi_binding.dart';
 import 'package:moneta/controllers/edit_transaksi_binding.dart';
+import 'package:moneta/controllers/login_binding.dart';
 import 'package:moneta/controllers/pencatatan_binding.dart';
 import 'package:moneta/controllers/rekomendasi_binding.dart';
 import 'package:moneta/controllers/riwayat_binding.dart';
+import 'package:moneta/controllers/registrasi_binding.dart';
+import 'package:moneta/views/login_view.dart';
+import 'package:moneta/views/registrasi_view.dart';
 import 'package:moneta/views/riwayat_view.dart';
 import 'package:moneta/views/alokasi_view.dart';
 import 'package:moneta/views/pencatatan_view.dart';
@@ -44,6 +48,16 @@ class AppPages {
       name: AppRoutes.editTransaksi,
       page: () => const PencatatanView(isEdit: true),
       binding: EditTransaksiBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.registrasi, 
+      page: () => const RegistrasiView(),
+      binding: RegistrasiBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.login,
+      page: () => const LoginView(),
+      binding: LoginBinding(),
     ),
   ];
 }
