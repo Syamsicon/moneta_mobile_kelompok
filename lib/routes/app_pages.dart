@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'package:moneta/controllers/alokasi_binding.dart';
 import 'package:moneta/controllers/pencatatan_binding.dart';
 import 'package:moneta/controllers/rekomendasi_binding.dart';
+import 'package:moneta/controllers/riwayat_binding.dart';
+import 'package:moneta/views/riwayat_view.dart';
 import 'package:moneta/views/alokasi_view.dart';
 import 'package:moneta/views/pencatatan_view.dart';
 import 'package:moneta/views/rekomendasi_view.dart';
@@ -31,6 +33,11 @@ class AppPages {
       name: AppRoutes.pencatatan,
       page: () => const PencatatanView(),
       binding: PencatatanBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.riwayat,
+      page: () => const RiwayatView(),
+      binding: RiwayatBinding()
     ),
   ];
 }

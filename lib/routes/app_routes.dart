@@ -3,4 +3,5 @@ abstract class AppRoutes {
   static const alokasi = '/alokasi';
   static const rekomendasi = '/rekomendasi';
   static const pencatatan = '/pencatatan';
+  static const riwayat = '/riwayat';
 }

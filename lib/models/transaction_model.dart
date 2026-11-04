@@ -15,13 +15,19 @@ class TransactionModel {
     this.iconUrl,
   });
 
+  DateTime? get parsedDate {
+    final parsed = DateTime.tryParse(date);
+    if (parsed == null) return null;
+    return parsed.isUtc ? parsed.toLocal() : parsed;
+  }
+
   String get formattedAmount {
     final isNegative = amount < 0;
     final absVal = amount.abs().toInt();
     final formatted = absVal.toString().replaceAllMapped(
-          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-          (Match m) => '${m[1]}.',
-        );
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]}.',
+    );
     return isNegative ? '-Rp$formatted' : 'Rp$formatted';
   }
 
