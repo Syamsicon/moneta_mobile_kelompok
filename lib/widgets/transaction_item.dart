@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import '../models/transaction_model.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
 class TransactionItem extends StatelessWidget {
-  final TransactionModel transaction; 
+  final TransactionModel transaction;
 
   const TransactionItem({super.key, required this.transaction});
 
-  String _formatRupiah(double amount){
+  String _formatRupiah(double amount) {
     final sign = amount < 0 ? '-' : '';
     final digits = amount.abs().toStringAsFixed(0);
     final withDots = digits.replaceAllMapped(
@@ -20,38 +22,40 @@ class TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final date = transaction.parsedDate;
+    final dateLabel = date == null
+        ? transaction.date
+        : DateFormat('d MMM').format(date);
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.divider
-          )
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.divider)),
       ),
       child: Row(
         children: [
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black),
-            ),
+            decoration: BoxDecoration(border: Border.all(color: Colors.black)),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transaction.merchantName,
-                    style: AppTextStyles.merchantName),
-                Text('${transaction.date} | ${transaction.location}',
-                    style: AppTextStyles.merchantDetail),
+                Text(
+                  transaction.merchantName,
+                  style: AppTextStyles.merchantName,
+                ),
+                Text(
+                  '$dateLabel | ${transaction.location}',
+                  style: AppTextStyles.merchantDetail,
+                ),
               ],
             ),
           ),
-          Text(_formatRupiah(transaction.amount),
-              style: AppTextStyles.amount,)
+          Text(_formatRupiah(transaction.amount), style: AppTextStyles.amount),
         ],
       ),
     );
