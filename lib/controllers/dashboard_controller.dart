@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../models/transaction_model.dart';
+import '../routes/app_routes.dart';
 
 class DashboardController extends GetxController {
   final userName = 'Sutarman, T'.obs;
@@ -35,6 +36,6 @@ class DashboardController extends GetxController {
   }
 
   void onQuickAddClick() {
-    Get.snackbar('Quick Add', 'Fitur Quick Add segera hadir');
+    Get.toNamed(AppRoutes.pencatatan);
   }
 }

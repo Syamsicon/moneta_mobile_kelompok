@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:moneta/controllers/alokasi_binding.dart';
+import 'package:moneta/controllers/pencatatan_binding.dart';
 import 'package:moneta/controllers/rekomendasi_binding.dart';
 import 'package:moneta/views/alokasi_view.dart';
+import 'package:moneta/views/pencatatan_view.dart';
 import 'package:moneta/views/rekomendasi_view.dart';
 
 import '../controllers/dashboard_binding.dart';
@@ -24,6 +26,11 @@ class AppPages {
       name: AppRoutes.rekomendasi,
       page: () => const RekomendasiView(),
       binding: RekomendasiBinding()
+    ),
+    GetPage(
+      name: AppRoutes.pencatatan,
+      page: () => const PencatatanView(),
+      binding: PencatatanBinding(),
     ),
   ];
 }
