@@ -7,6 +7,15 @@ class DashboardController extends GetxController {
   final currentDate = 'Kamis, 13 November 2026'.obs;
   final userInitial = 'T'.obs;
 
+  // alokasi
+  final kebutuhan = 5000000.0.obs;
+  final keinginan = 1200000.0.obs;
+  final tabungan = 800000.0.obs;
+
+  // Rencana | Realita
+  final rencana = 5000000.0.obs;
+  final realita = 2000000.0.obs;
+
   final selectedNavIndex = 1.obs; // 0 = Riwayat, 1 = Dashboard, 2 = Alokasi
   final transactions = <TransactionModel>[].obs;
 
