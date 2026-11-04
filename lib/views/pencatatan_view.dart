@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../controllers/edit_transaksi_controller.dart';
 import '../controllers/pencatatan_controller.dart';
 import '../models/kategori_model.dart';
 import '../theme/app_colors.dart';
@@ -12,7 +13,15 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/top_nav_bar.dart';
 
 class PencatatanView extends GetView<PencatatanController> {
-  const PencatatanView({super.key});
+  /// true = dipakai untuk halaman Edit Transaksi
+  final bool isEdit;
+
+  const PencatatanView({super.key, this.isEdit = false});
+
+  @override
+  PencatatanController get controller => isEdit
+      ? Get.find<EditTransaksiController>()
+      : Get.find<PencatatanController>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +57,7 @@ class PencatatanView extends GetView<PencatatanController> {
                     children: [
                       Center(
                         child: Text(
-                          'Input Transaksi',
+                          isEdit ? 'Edit Transaksi' : 'Input Transaksi',
                           style: AppTextStyles.title.copyWith(fontSize: 22),
                         ),
                       ),
@@ -89,6 +98,8 @@ class PencatatanView extends GetView<PencatatanController> {
 
                       const SizedBox(height: 8),
 
+                      // Tombol toggle Advance disembunyikan saat mode edit
+                      if (!isEdit)
                       Center(
                         child: InkWell(
                           onTap: controller.toggleAdvanced,
@@ -137,7 +148,7 @@ class PencatatanView extends GetView<PencatatanController> {
                           ),
                           const SizedBox(width: 12),
                           CustomButton(
-                            text: 'Enter',
+                            text: isEdit ? 'Simpan' : 'Enter',
                             width: 110,
                             height: 38,
                             onPressed: controller.simpanTransaksi,

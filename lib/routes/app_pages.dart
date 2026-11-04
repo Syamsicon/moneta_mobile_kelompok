@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:moneta/controllers/alokasi_binding.dart';
+import 'package:moneta/controllers/edit_transaksi_binding.dart';
 import 'package:moneta/controllers/pencatatan_binding.dart';
 import 'package:moneta/controllers/rekomendasi_binding.dart';
 import 'package:moneta/controllers/riwayat_binding.dart';
@@ -38,6 +39,11 @@ class AppPages {
       name: AppRoutes.riwayat,
       page: () => const RiwayatView(),
       binding: RiwayatBinding()
+    ),
+    GetPage(
+      name: AppRoutes.editTransaksi,
+      page: () => const PencatatanView(isEdit: true),
+      binding: EditTransaksiBinding(),
     ),
   ];
 }

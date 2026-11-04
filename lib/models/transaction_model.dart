@@ -5,6 +5,8 @@ class TransactionModel {
   final String location;
   final double amount;
   final String? iconUrl;
+  final String? description;
+  final String? kategoriId;
 
   const TransactionModel({
     required this.id,
@@ -13,6 +15,8 @@ class TransactionModel {
     required this.location,
     required this.amount,
     this.iconUrl,
+    this.description,
+    this.kategoriId,
   });
 
   DateTime? get parsedDate {
@@ -39,6 +43,8 @@ class TransactionModel {
       location: json['location'] ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       iconUrl: json['iconUrl'],
+      description: json['description'],
+      kategoriId: json['kategoriId'],
     );
   }
 
@@ -50,7 +56,8 @@ class TransactionModel {
       'location': location,
       'amount': amount,
       'iconUrl': iconUrl,
+      'description': description,
+      'kategoriId': kategoriId,
     };
   }
 }
-

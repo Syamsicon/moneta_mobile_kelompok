@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:moneta/widgets/date_range_picker.dart';
+import '../routes/app_routes.dart';
 import '../models/transaction_model.dart';
 import '../theme/app_text_styles.dart';
 import 'transaction_item.dart';
@@ -58,7 +60,13 @@ class _TransactionHistorySectionState extends State<TransactionHistorySection> {
           ),  
         ),
         const SizedBox(height: 8),
-        ...visibleTransactions.map((t) => TransactionItem(transaction: t)),
+        ...visibleTransactions.map(
+          (t) => TransactionItem(
+            transaction: t,
+            // Pencet baris -> masuk halaman Edit
+            onTap: () => Get.toNamed(AppRoutes.editTransaksi, arguments: t),
+          ),
+        ),
       ],
     );
   }

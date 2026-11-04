@@ -84,17 +84,14 @@ class PencatatanController extends GetxController {
     selectedKategori.value = kategori;
   }
 
-  // ===== Bukti Transaksi (Kamera / Galeri) =====
   final ImagePicker _picker = ImagePicker();
 
-  /// Ambil foto bukti dari [source] (kamera atau galeri),
-  /// lalu simpan path-nya ke [buktiPath].
   Future<void> ambilFoto(ImageSource source) async {
     try {
       final XFile? foto = await _picker.pickImage(
         source: source,
-        imageQuality: 70, // kompres kualitas supaya file tidak besar
-        maxWidth: 1080, // batasi resolusi
+        imageQuality: 70, 
+        maxWidth: 1080, 
       );
       if (foto != null) {
         buktiPath.value = foto.path;
@@ -162,6 +159,8 @@ class PencatatanController extends GetxController {
       location: lokasi,
       amount: -nominal,
       iconUrl: buktiPath.value,
+      description: deskripsiController.text.trim(),
+      kategoriId: selectedKategori.value?.id,
     );
 
     if (Get.isRegistered<DashboardController>()) {

@@ -4,4 +4,5 @@ abstract class AppRoutes {
   static const rekomendasi = '/rekomendasi';
   static const pencatatan = '/pencatatan';
   static const riwayat = '/riwayat';
+  static const editTransaksi = '/edit-transaksi';
 }
