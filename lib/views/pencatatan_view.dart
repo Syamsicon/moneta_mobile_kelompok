@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../controllers/pencatatan_controller.dart';
 import '../models/kategori_model.dart';
 import '../theme/app_colors.dart';
@@ -51,7 +54,6 @@ class PencatatanView extends GetView<PencatatanController> {
                       ),
                       const SizedBox(height: 20),
 
-                      // 1. Judul Transaksi
                       CustomTextField(
                         label: 'Judul Transaksi',
                         hintText: 'Ikan',
@@ -59,7 +61,6 @@ class PencatatanView extends GetView<PencatatanController> {
                       ),
                       const SizedBox(height: 16),
 
-                      // 2. Nominal (di bawah Judul, di atas Tanggal)
                       CustomTextField(
                         label: 'Nominal',
                         hintText: 'Rp28.000',
@@ -68,11 +69,9 @@ class PencatatanView extends GetView<PencatatanController> {
                       ),
                       const SizedBox(height: 16),
 
-                      // 3. Tanggal
                       _buildTanggalSection(context),
                       const SizedBox(height: 16),
 
-                      // 4. Nama / Kategori Dropdown
                       _buildKategoriDropdown(),
                       const SizedBox(height: 16),
 
@@ -81,7 +80,6 @@ class PencatatanView extends GetView<PencatatanController> {
                         thickness: 0.8,
                       ),
 
-                      // Bagian Advance Fields (Expandable)
                       Obx(() {
                         if (!controller.isAdvancedOpen.value) {
                           return const SizedBox.shrink();
@@ -91,7 +89,6 @@ class PencatatanView extends GetView<PencatatanController> {
 
                       const SizedBox(height: 8),
 
-                      // Tombol Toggle Advance Fields
                       Center(
                         child: InkWell(
                           onTap: controller.toggleAdvanced,
@@ -128,7 +125,6 @@ class PencatatanView extends GetView<PencatatanController> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Tombol Keluar & Enter
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -266,7 +262,6 @@ class PencatatanView extends GetView<PencatatanController> {
       children: [
         const SizedBox(height: 12),
 
-        // 1. Deskripsi (dipindah ke bagian Advance Fields sesuai kesepakatan)
         Text('Deskripsi', style: AppTextStyles.label),
         const SizedBox(height: 6),
         TextField(
@@ -296,7 +291,6 @@ class PencatatanView extends GetView<PencatatanController> {
         ),
         const SizedBox(height: 16),
 
-        // 2. Bukti Transaksi
         Text('Bukti', style: AppTextStyles.label),
         const SizedBox(height: 2),
         Obx(
@@ -308,34 +302,51 @@ class PencatatanView extends GetView<PencatatanController> {
           ),
         ),
         const SizedBox(height: 6),
-        InkWell(
-          onTap: () {
-            Get.snackbar(
-              'Bukti Transaksi',
-              'Fitur Kamera & Galeri akan diaktifkan pada step berikutnya',
-              snackPosition: SnackPosition.BOTTOM,
-              margin: const EdgeInsets.all(16),
-            );
-          },
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            width: double.infinity,
-            height: 110,
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.border, width: 1),
-              borderRadius: BorderRadius.circular(8),
+        Obx(() {
+          final path = controller.buktiPath.value;
+          return InkWell(
+            onTap: _showPilihSumberFoto,
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              width: double.infinity,
+              height: 110,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                border: Border.all(color: AppColors.border, width: 1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: path == null
+  
+                  ? const Icon(Icons.add, size: 36, color: AppColors.grey)
+       
+                  : Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.file(File(path), fit: BoxFit.cover),
+                        Positioned(
+                          top: 6,
+                          right: 6,
+                          child: GestureDetector(
+                            onTap: controller.hapusFoto,
+                            child: const CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Colors.black54,
+                              child: Icon(
+                                Icons.close,
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
-            alignment: Alignment.center,
-            child: const Icon(
-              Icons.add,
-              size: 36,
-              color: AppColors.grey,
-            ),
-          ),
-        ),
+          );
+        }),
         const SizedBox(height: 16),
 
-        // 3. Lokasi Transaksi
         CustomTextField(
           label: 'Lokasi Transaksi',
           hintText: 'Lokasi Kejadian...',
@@ -368,6 +379,50 @@ class PencatatanView extends GetView<PencatatanController> {
         ),
         const SizedBox(height: 8),
       ],
+    );
+  }
+
+  void _showPilihSumberFoto() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: const BoxDecoration(
+          color: AppColors.sheetWhite,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(
+                  Icons.camera_alt_outlined,
+                  color: AppColors.textPrimary,
+                ),
+                title: Text('Kamera', style: AppTextStyles.input),
+                onTap: () {
+                  Get.back(); 
+                  controller.ambilFoto(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library_outlined,
+                  color: AppColors.textPrimary,
+                ),
+                title: Text('Galeri', style: AppTextStyles.input),
+                onTap: () {
+                  Get.back();
+                  controller.ambilFoto(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

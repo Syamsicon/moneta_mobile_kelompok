@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/kategori_catalog.dart';
 import '../models/kategori_model.dart';
 import '../models/transaction_model.dart';
 import 'dashboard_controller.dart';
 
 class PencatatanController extends GetxController {
-  final selectedNavIndex = 1.obs; // Tetap di tab tengah (Dashboard)
+  final selectedNavIndex = 1.obs; 
 
-  // Text Controllers
   final judulController = TextEditingController();
   final nominalController = TextEditingController();
   final deskripsiController = TextEditingController();
   final lokasiController = TextEditingController();
 
-  // Reactive States
   final selectedDate = Rxn<DateTime>();
   final selectedKategori = Rxn<KategoriModel>();
   final isAdvancedOpen = false.obs;
@@ -83,6 +82,35 @@ class PencatatanController extends GetxController {
 
   void pilihKategori(KategoriModel? kategori) {
     selectedKategori.value = kategori;
+  }
+
+  // ===== Bukti Transaksi (Kamera / Galeri) =====
+  final ImagePicker _picker = ImagePicker();
+
+  /// Ambil foto bukti dari [source] (kamera atau galeri),
+  /// lalu simpan path-nya ke [buktiPath].
+  Future<void> ambilFoto(ImageSource source) async {
+    try {
+      final XFile? foto = await _picker.pickImage(
+        source: source,
+        imageQuality: 70, // kompres kualitas supaya file tidak besar
+        maxWidth: 1080, // batasi resolusi
+      );
+      if (foto != null) {
+        buktiPath.value = foto.path;
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Gagal',
+        'Gagal mengambil foto',
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
+  }
+
+  void hapusFoto() {
+    buktiPath.value = null;
   }
 
   void pilihLokasiDummy() {
