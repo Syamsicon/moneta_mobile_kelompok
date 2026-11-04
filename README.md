@@ -51,97 +51,51 @@ Ensure you have the following dependencies installed locally before setting up t
 * Android Studio (AndroidSDK 37.0)
 
 
-## 🚀 Installation & Setup Instructions <under_construction>
+## 🚀 Setup Project Instructions <under_construction>
 
 Follow these step-by-step instructions to get a local copy running.
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/username/taskmaster-pro.git
-cd taskmaster-pro
+git clone https://github.com/Syamsicon/moneta_mobile_kelompok
+cd moneta_mobile_kelompok
 ```
 
-### 2. Environment Configuration
+### 2. Environment Configuration <under_construction>
 Create a `.env` file in the root directory (or in both `/client` and `/server` if split):
 
 ```env
-# Server Configuration
-PORT=5000
-NODE_ENV=development
 
-# Database
-MONGO_URI=mongodb://localhost:27017/taskmaster_db
-
-# Security
-JWT_SECRET=your_super_secret_jwt_key_here
-JWT_EXPIRES_IN=7d
 ```
 
 ### 3. Install Dependencies <under_construction>
 ```bash
-# Install root/backend dependencies
-npm install
+# Install frontend dependencies
+flutter pub get
 
-# Install frontend dependencies (if structured as a monorepo)
-cd client && npm install && cd ..
 ```
 
 ---
 
-## 🏃 Running the Application
+## 🏃 Running the Application <under_construction>
 
-### Development Mode
-Runs both client and server concurrently with hot reloading:
-
-```bash
-# Start backend server (Nodemon)
-npm run dev:server
-
-# Start frontend development server (Vite/React)
-npm run dev:client
-
-# Alternatively (if concurrently is configured):
-npm run dev
-```
-* **Frontend:** `http://localhost:3000`
-* **Backend API:** `http://localhost:5000`
-
-### Production Build
-To test the production build locally:
-
-```bash
-# Build client assets
-cd client && npm run build && cd ..
-
-# Start production server
-npm start
-```
 
 ---
 
-## 📁 Project Structure <under_construction>
+## 📁 Project Structure 
 
 ```text
-taskmaster-pro/
-├── client/                   # Frontend React Application
-│   ├── public/               # Static assets (favicons, images)
-│   └── src/
-│       ├── assets/           # Dynamic media assets
-│       ├── components/       # Reusable UI components
-│       ├── pages/            # Application routes/views
-│       ├── services/         # API request modules (Axios/Fetch)
-│       └── App.jsx           # Main App entry point
-├── server/                   # Backend Express API
-│   ├── config/               # DB connection & app config
-│   ├── controllers/          # Route handlers / business logic
-│   ├── middleware/           # Auth and error middleware
-│   ├── models/               # Mongoose DB Schemas
-│   ├── routes/               # Express API endpoints
-│   └── server.js             # Express server entry point
-├── tests/                    # Unit and Integration test scripts
-├── .env.example              # Example environment variables schema
-├── .gitignore                # Git ignore rules
-├── package.json              # Project scripts and dependencies
-└── README.md                 # Project documentation
+moneta_mobile_kelompok/
+├── lib/                       # Main Dart source directory
+│   ├── main.dart              # Application entry point & State Management Setup
+│   ├── controllers/           # State Management
+│   ├── models/                # Data models and JSON serializers
+│   ├── routes/                # Route setup
+│   ├── services/              # APIs and core app 
+│   ├── theme/                 # Global style reference
+│   ├── view/                  # Main application views/pages
+│   ├── widgets/               # Reusable UI components
+├── pubspec.yaml               # Flutter package configuration & dependencies
+└── README.md                  # Project documentation
 ```
 
