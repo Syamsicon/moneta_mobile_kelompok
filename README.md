@@ -5,10 +5,6 @@
 -->
 # Moneta
 
-![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Build Status](https://img.shields.io/badge/build-passing-success)
-![Course Grade](https://img.shields.io/badge/Assignment-Final%20Project-orange)
 
 > **Course:** Mobile Development 
 > **Submitted By:** Kelompok 3
@@ -32,14 +28,10 @@
 
 ## 🛠 Tech Stack
 
-| Domain | Technology / Library | Purpose |
-| :--- | :--- | :--- |
-| **Frontend** | React 18, Tailwind CSS | Single-page application, responsive layout |
-| **Backend** | Node.js, Express.js | RESTful API service & business logic |
-| **Database** | MongoDB, Mongoose ORM | NoSQL data storage & schema validation |
-| **Authentication** | JSON Web Tokens (JWT), bcrypt | Session security & password hashing |
-| **Testing** | Jest, Supertest, React Testing Library | Unit & integration testing suites |
-| **Deployment** | Vercel (Frontend), Render (Backend) | Cloud hosting and continuous deployment |
+| Domain | Technology / Package | Purpose |
+| ----- | ----- | ----- |
+| **Framework** | Flutter (Dart `v3.x`) | Cross-platform UI library |
+| **State Management**| GetX | Reactive app state and business logic separation |
 
 ---
 
