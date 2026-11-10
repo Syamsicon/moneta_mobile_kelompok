@@ -13,7 +13,7 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/top_nav_bar.dart';
 
 class PencatatanView extends GetView<PencatatanController> {
-  /// true = dipakai untuk halaman Edit Transaksi
+
   final bool isEdit;
 
   const PencatatanView({super.key, this.isEdit = false});
@@ -225,7 +225,7 @@ class PencatatanView extends GetView<PencatatanController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Nama', style: AppTextStyles.label),
+        Text('Kategori', style: AppTextStyles.label),
         const SizedBox(height: 6),
         Obx(
           () => Container(

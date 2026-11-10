@@ -135,7 +135,7 @@ class LoginView extends GetView<LoginController> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Sudah punya akun?',
+                            'Belum punya akun?',
                             style: AppTextStyles.label,
                           ),
                           const SizedBox(width: 4),
@@ -177,7 +177,7 @@ class LoginView extends GetView<LoginController> {
                           elevation: 0,
                         ),
                         child: Text(
-                          'Daftar',
+                          'Masuk',
                           style: AppTextStyles.buttonPrimary,
                         ),
                       ),

@@ -18,7 +18,7 @@ class DashboardView extends GetView<DashboardController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Navigation Bar (Fixed at top)
+            // Top Navigation Bar
             Obx(
               () => TopNavBar(
                 selectedIndex: controller.selectedNavIndex.value,
@@ -27,7 +27,7 @@ class DashboardView extends GetView<DashboardController> {
             ),
             const SizedBox(height: 8),
 
-            // Main White Sheet (Scrollable)
+            // background scrollable
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -70,6 +70,7 @@ class DashboardView extends GetView<DashboardController> {
                       ),
                       const _PersebaranCard(),
 
+                      SizedBox(height: 10,),
                       Obx(
                         () => TransactionListSection(
                           transaction: controller.transactions.toList(),

@@ -6,18 +6,15 @@ import 'dashboard_controller.dart';
 import 'pencatatan_controller.dart';
 import 'riwayat_controller.dart';
 
-/// Turunan dari PencatatanController, jadi semua fungsi form
-/// (pilih tanggal, kategori, foto, lokasi) tinggal dipakai ulang.
 class EditTransaksiController extends PencatatanController {
   late TransactionModel transaksiLama;
 
   @override
   void onInit() {
     super.onInit();
-    // Data transaksi yang dikirim dari halaman Riwayat
+
     transaksiLama = Get.arguments as TransactionModel;
 
-    // Isi form dengan data lama
     judulController.text = transaksiLama.merchantName;
     nominalController.text = transaksiLama.amount.abs().toInt().toString();
     lokasiController.text = transaksiLama.location;
@@ -28,7 +25,6 @@ class EditTransaksiController extends PencatatanController {
       selectedKategori.value = KategoriCatalog.byId(transaksiLama.kategoriId!);
     }
 
-    // Mode edit langsung buka semua field
     isAdvancedOpen.value = true;
   }
 
@@ -51,7 +47,7 @@ class EditTransaksiController extends PencatatanController {
     }
 
     final transaksiBaru = TransactionModel(
-      id: transaksiLama.id, // id tetap sama
+      id: transaksiLama.id, 
       merchantName: judul,
       date: (selectedDate.value ?? DateTime.now()).toIso8601String(),
       location: lokasiController.text.trim(),
@@ -61,7 +57,6 @@ class EditTransaksiController extends PencatatanController {
       kategoriId: selectedKategori.value?.id,
     );
 
-    // Ganti data lama di list Riwayat & Dashboard (kalau halamannya ada)
     if (Get.isRegistered<RiwayatController>()) {
       _ganti(Get.find<RiwayatController>().transactions, transaksiBaru);
     }

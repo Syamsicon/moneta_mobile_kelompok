@@ -1,3 +1,5 @@
+
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -86,7 +88,7 @@ class AlokasiView extends GetView<AlokasiController> {
                             sections.add(
                               PieChartSectionData(
                                 color: item.color,
-                                value: item.amount > 0 ? item.amount : 0.01,
+                                value: item.amount,
                                 title: item.amount > 0
                                     ? '${percentage.toStringAsFixed(0)}%'
                                     : '',
@@ -334,6 +336,7 @@ class AlokasiView extends GetView<AlokasiController> {
   }
 
   void _showCategoryOverlay(BuildContext context) {
+    
     Get.bottomSheet(
       Container(
         color: Colors.white,
@@ -345,24 +348,27 @@ class AlokasiView extends GetView<AlokasiController> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const Divider(),
-            Obx(() {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.kategoriList.length,
-                itemBuilder: (context, index) {
-                  final kat = controller.kategoriList[index];
-                  return CheckboxListTile(
-                    secondary: Icon(kat.icon, color: kat.color),
-                    title: Text(kat.name),
-                    value: kat.isSelected,
-                    onChanged: (bool? value) {
-                      controller.toggleSelection(kat.id, value);
-                    },
-                  );
-                },
-              );
-            }),
+            SizedBox(
+              height: 300,
+              child: Obx(() {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: controller.kategoriList.length,
+                  itemBuilder: (context, index) {
+                    final kat = controller.kategoriList[index];
+                    return CheckboxListTile(
+                      secondary: Icon(kat.icon, color: kat.color),
+                      title: Text(kat.name),
+                      value: kat.isSelected,
+                      onChanged: (bool? value) {
+                        controller.toggleSelection(kat.id, value);
+                      },
+                    );
+                  },
+                );
+              }),
+            ),
             const SizedBox(height: 12),
             Align(
               alignment: Alignment.centerRight,
